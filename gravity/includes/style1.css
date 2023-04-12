@@ -1,9 +1,9 @@
 body {
-  background-color: #002651;
-  padding: 50px;
+  background-color: #0c0c0c;
+  padding: 40px;
 }
 #canvas {
-  background-color: #F3FBFF;
+  background-color: #050505;
   position:absolute;
   /*top:10px;
   left:10px;*/
@@ -14,3 +14,4 @@ body {
   /*top:10px;
   left:10px;*/
 }
+
