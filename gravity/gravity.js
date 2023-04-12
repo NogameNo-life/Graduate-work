@@ -4,11 +4,11 @@ var canvas_bg = document.getElementById('canvas_bg');
 var context_bg = canvas_bg.getContext('2d'); 
 
 var balls;
-var numBalls = 150;
+var numBalls = 300;
 var walls;
 var vfac = 1;
 var t0, dt;
-var g = 5;
+var g = 15;
 var force;
 var acc;
 
@@ -22,7 +22,7 @@ function init() {
 	balls = new Array();
 
 	for(var i = 0; i < numBalls; i++){
-		var radius = 4;
+		var radius = 7;
 
 		var speed_x = getRandomArbitrary(0, 10);
 		var speed_y = getRandomArbitrary(0, 10);
@@ -31,7 +31,7 @@ function init() {
 		if (Math.random() > 0.5) speed_y = (-1)*speed_y;
 
 		var mass = 0.01*Math.pow(radius,3);
-		var ball = new Ball(radius,'#808080',mass,0,true);
+		var ball = new Ball(radius,'#5C62D6',mass,0);
 		ball.pos2D = new Vector2D(Math.random()*(canvas.width-2*radius)+radius, Math.random()*(canvas.height-2*radius)+radius);
 
 		ball.velo2D = new Vector2D(speed_x, speed_y);
