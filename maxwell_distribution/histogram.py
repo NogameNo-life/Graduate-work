@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.patches as patches
 import matplotlib.path as path
 
-
 class Histogram:
     """A class to draw a Matplotlib histogram as a collection of Patches."""
 
