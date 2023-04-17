@@ -84,7 +84,9 @@ var context = canvas.getContext('2d');
 
 Результат моделирования:
 
-<![gravity](images/gravity.gif "title")
+<p align="center">
+<img align="center" src="images/gravity.gif">
+</p>
 <p align="center">Распределение частиц в поле силы тяжести</p>
 
 ## Глава II. Моделирование броуновского движения
@@ -173,7 +175,9 @@ def game():
 
 Результат моделирования:
 
-![brownian](images/brownian.gif "title")
+<p align="center">
+<img align="center" src="images/brownian.gif">
+</p>
 <p align="center">Броуновское движение</p>
 
 ## Глава III. Моделирование распределения молекул по скоростям
@@ -304,7 +308,9 @@ init_func #функция для отрисовки четкого кадра
 
 Результаты моделирования:
 
-![maxwell](images/mxd.gif "title")
+<p align="center">
+<img align="center" src="images/mxd.gif">
+</p>
 <p align="center">Распределение молекул по скоростям</p>
 
 ## Заключение
