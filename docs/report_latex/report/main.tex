@@ -1,0 +1,121 @@
+\documentclass[a4paper,14pt,oneside,openany]{memoir}
+\usepackage[english, russian]{babel}                % Настройки для русского языка как основного в тексте
+%\babelfont{rm}{Times New Roman}                     % TMR в качестве базового roman-щрифта
+\usepackage{times}
+\usepackage{array}
+\setlength{\arrayrulewidth}{0.005 mm}
+\usepackage{xcolor}
+
+\usepackage{lipsum}
+\usepackage{ragged2e}
+%\usepackage[left=25mm, right=25mm, top=25 mm, bottom=25mm]{geometry} % Пакет geometry с аргументами для определения полей
+\usepackage[left=3 cm, right=1 cm, top=2 cm, bottom=2 cm]{geometry}
+
+
+
+\pagestyle{plain} % Убираем стандарные для данного класса верхние колонтитулы с заголовком текущей главы, оставляем только номер страницы снизу по центру
+
+%%% Задаем параметры оглавления %%%
+
+\usepackage{indentfirst} % Добавляем отступ к первому абзацу
+\linespread{1} % Межстрочный интервал (наиболее близко к вордовскому полуторному) - тут вместо этого используется команда OnehalfSpacing*
+\parindent=0.8cm % Абзацный отступ 1.25 см, приблизительно равно пяти знакам, как по ГОСТ
+\renewcommand*{\chapternumberline}[1]{} % Делаем так, чтобы номер главы не печатался
+\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase} % Названия глав обычным шрифтом заглавными буквами
+\addto\captionsrussian{\renewcommand\contentsname{Содержание}} % Меняем слово "Оглавление" на "Содержание"
+\setrmarg{2.55em plus1fil} % Запрещаем переносы слов в оглавлении
+
+\renewcommand*{\cftchapternumwidth}{1.5em} % Ставим подходящий по размеру разделитель между номером главы и самим заголовком
+\setsecnumdepth{subsection} % Номера разделов считать до третьего уровня включительно, т.е. нумеруются только главы, секции, подсекции
+\renewcommand*{\chapterheadstart}{} % Переопределяем команду, задающую отступ над заголовком, чтобы отступа не было
+\renewcommand*{\printchapternum}{} % То же самое для номера главы - тут не надо, номер главы оставляем
+\renewcommand*{\printchaptername}{} % Переопределяем команду, печатающую слово "Глава", чтобы оно не печалось
+\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase} % Названия глав обычным шрифтом заглавными буквами
+\renewcommand*{\cftchapterpagefont}{\normalfont} % Номера страниц обычным шрифтом
+\renewcommand*{\cftchapterleader}{\cftdotfill{\cftchapterdotsep}} % Делаем точки стандартной формы (по умолчанию они "жирные")
+\renewcommand*{\cftchapterdotsep}{\cftdotsep} % Делаем точки до номера страницы после названий глав
+\renewcommand*{\cftdotsep}{1} % Задаем расстояние между точками
+\renewcommand*{\chapnumfont}{\normalfont\bfseries} % Меняем стиль шрифта для номера главы: нормальный размер, полужирный
+\renewcommand*{\afterchapternum}{\hspace{1em}} % Меняем разделитель между номером главы и названием
+\renewcommand*{\printchaptertitle}{\normalfont\bfseries\centering\MakeUppercase} % Меняем стиль написания для заголовка главы: нормальный размер, полужирный, центрированный, заглавными буквами
+\setbeforesecskip{10pt} % Задаем отступ перед заголовком секции
+\setaftersecskip{10pt} % Ставим такой же отступ после заголовка секции
+\setsecheadstyle{\raggedright\normalfont\bfseries} % Меняем стиль написания для заголовка секции: выравнивание по правому краю без переносов, нормальный размер, полужирный
+\renewcommand*{\printchapternum}{} 
+
+
+
+
+
+\maxtocdepth{subsection} % В оглавление попадают только разделы первыхтрех уровней: главы, секции и подсекции
+
+%%% Выравнивание и переносы %%%
+
+\tolerance 1414
+\hbadness 1414
+\emergencystretch 1.5em                             % В случае проблем регулировать в первую очередь
+\hfuzz 0.3pt
+\vfuzz \hfuzz
+%\dbottom
+%\sloppy                                            % Избавляемся от переполнений
+\clubpenalty=10000                                  % Запрещаем разрыв страницы после первой строки абзаца
+\widowpenalty=10000                                 % Запрещаем разрыв страницы после последней строки абзаца
+\brokenpenalty=4991                                 % Ограничение на разрыв страницы, если строка заканчивается переносом
+
+%\DeclareDelimFormat{bibinitdelim}{}                  Убираем пробел между инициалами (Иванов И.И. вместо Иванов И. И.)
+
+%%% Настраиваем отображение списков %%%
+
+\usepackage{enumitem}                               % Подгружаем пакет для гибкой настройки списков
+\makeatletter
+    \AddEnumerateCounter{\asbuk}{\russian@alph}     % Объясняем пакету enumitem, как использовать asbuk
+\makeatother
+\renewcommand{\labelenumii}{\asbuk{enumii})}        % Кириллица для второго уровня нумерации
+\renewcommand{\labelenumiii}{\arabic{enumiii})}     % Арабские цифры для третьего уровня нумерации
+\setlist{noitemsep, leftmargin=*}                   % Убираем интервалы между пунками одного уровня в списке
+\setlist[1]{labelindent=\parindent}                 % Отступ у пунктов списка равен абзацному отступу
+\setlist[2]{leftmargin=\parindent}                  % Плюс еще один такой же отступ для следующего уровня
+\setlist[3]{leftmargin=\parindent}                  % И еще один для третьего уровня
+
+%%% Счетчики для нумерации объектов %%%
+
+\counterwithout{figure}{chapter}                    % Сквозная нумерация рисунков по документу
+\counterwithout{equation}{chapter}                  % Сквозная нумерация математических выражений по документу
+\counterwithout{table}{chapter}   
+
+\usepackage{graphicx, caption, subcaption} % Подгружаем пакеты для работы с графикой и настройки подписей
+\graphicspath{{images/}} % Определяем папку с рисунками
+\captionsetup[figure]{font=small, width=\textwidth, name=Рисунок, justification=centering} % Задаем параметры подписей к рисункам: маленький шрифт (в данном случае 12pt), ширина равна ширине текста, полнотекстовая надпись "Рисунок", выравнивание по центру
+
+%%% Задаем параметры оформления рисунков и таблиц %%%
+
+\usepackage{graphicx, caption, subcaption} % Подгружаем пакеты для работы с графикой и настройки подписей
+\graphicspath{{images/}} % Определяем папку с рисунками
+\captionsetup[figure]{font=small, width=\textwidth, name=Рисунок, justification=centering} % Задаем параметры подписей к рисункам: маленький шрифт (в данном случае 12pt), ширина равна ширине текста, полнотекстовая надпись "Рисунок", выравнивание по центру
+\captionsetup[subfigure]{font=small} % Индексы подрисунков а), б) и так далее тоже шрифтом 12pt (по умолчанию делает еще меньше)
+\captionsetup[table]{singlelinecheck=false,font=small,width=\textwidth,justification=justified} % Задаем параметры подписей к таблицам: запрещаем переносы, маленький шрифт (в данном случае 12pt), ширина равна ширине текста, выравнивание по ширине
+\captiondelim{ --- } % Разделителем между номером рисунка/таблицы и текстом в подписи является длинное тире
+\setkeys{Gin}{width=\textwidth} % По умолчанию размер всех добавляемых рисунков будет подгоняться под ширину текста
+\renewcommand{\thesubfigure}{\asbuk{subfigure}} % Нумерация подрисунков строчными буквами кириллицы
+%\setlength{\abovecaptionskip}{0pt} % Отбивка над подписью - тут не меняем
+%\setlength{\belowcaptionskip}{0pt} % Отбивка под подписью - тут не меняем
+\usepackage[section]{placeins} % Объекты типа float (рисунки/таблицы) не вылезают за границы секциии, в которой они объявлены
+
+%%% Вставляем по очереди все содержательные части документа %%%
+
+\begin{document}
+
+\input{1_title}                                     % Титульник
+
+\newpage % Переходим на новую страницу
+\newgeometry{left=25mm, right=25mm, top=25 mm, bottom=25mm}
+\setcounter{page}{2} % Начинаем считать номера страниц со второй
+%\OnehalfSpacing*{1}  Задаем полуторный интервал текста (в титульнике одинарный, поэтому команда стоит после него)
+
+\tableofcontents*                                   % Автособираемое оглавление
+
+\input{2_intro}                                 % Введение
+\input{3_chap1}                                     % Первая глава
+\input{4_concl}                                     % Заключение
+
+\end{document}
