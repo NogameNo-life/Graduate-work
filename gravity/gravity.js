@@ -3,8 +3,8 @@ var context = canvas.getContext('2d');
 var canvas_bg = document.getElementById('canvas_bg');
 var context_bg = canvas_bg.getContext('2d'); 
 
-var balls;
-var numBalls = 300;
+var particles;
+var numParticles = 300;
 var walls;
 var vfac = 1;
 var t0, dt;
@@ -19,9 +19,9 @@ function getRandomArbitrary(min, max) {
 }
 
 function init() {
-	balls = new Array();
+	particles = new Array();
 
-	for(var i = 0; i < numBalls; i++){
+	for(var i = 0; i < numParticles; i++){
 		var radius = 7;
 
 		var speed_x = getRandomArbitrary(0, 10);
@@ -31,13 +31,13 @@ function init() {
 		if (Math.random() > 0.5) speed_y = (-1)*speed_y;
 
 		var mass = 0.01*Math.pow(radius,3);
-		var ball = new Ball(radius,'#5C62D6',mass,0);
-		ball.pos2D = new Vector2D(Math.random()*(canvas.width-2*radius)+radius, Math.random()*(canvas.height-2*radius)+radius);
+		var particle = new Particle(radius,'#5C62D6',mass,0);
+		particle.pos2D = new Vector2D(Math.random()*(canvas.width-2*radius)+radius, Math.random()*(canvas.height-2*radius)+radius);
 
-		ball.velo2D = new Vector2D(speed_x, speed_y);
+		particle.velo2D = new Vector2D(speed_x, speed_y);
 
-		balls.push(ball);
-		ball.draw(context);
+		particles.push(particle);
+		particle.draw(context);
 	}
 
 	walls = new Array();				
@@ -71,12 +71,12 @@ function onTimer(){
 
 function move(){		
 	context.clearRect(0, 0, canvas.width, canvas.height);	
-	for (var i=0; i<numBalls; i++){
-		var ball = balls[i];
-		calcForce(ball);
-		updateAccel(ball);
-		updateVelo(ball);
-		moveObject(ball);
+	for (var i=0; i<numParticles; i++){
+		var particle = particles[i];
+		calcForce(particle);
+		updateAccel(particle);
+		updateVelo(particle);
+		moveObject(particle);
 	}	
 	checkCollision();
 }
@@ -87,26 +87,26 @@ function moveObject(obj){
 }	
 
 function checkCollision(){
-	for (var i=0; i<balls.length; i++){
-		var ball1 = balls[i];
-		for(var j=i+1; j<balls.length; j++){
-			var ball2 = balls[j];
-			var dist = ball1.pos2D.subtract(ball2.pos2D);
-			if (dist.length() < (ball1.radius + ball2.radius) ) {   			
+	for (var i=0; i<particles.length; i++){
+		var particle1 = particles[i];
+		for(var j=i+1; j<particles.length; j++){
+			var particle2 = particles[j];
+			var dist = particle1.pos2D.subtract(particle2.pos2D);
+			if (dist.length() < (particle1.radius + particle2.radius) ) {   			
 				// normal velocity vectors just before the impact
-				var normalVelo1 = ball1.velo2D.project(dist);
-				var normalVelo2 = ball2.velo2D.project(dist);			
+				var normalVelo1 = particle1.velo2D.project(dist);
+				var normalVelo2 = particle2.velo2D.project(dist);			
 				// tangential velocity vectors
-				var tangentVelo1 = ball1.velo2D.subtract(normalVelo1);
-				var tangentVelo2 = ball2.velo2D.subtract(normalVelo2);
+				var tangentVelo1 = particle1.velo2D.subtract(normalVelo1);
+				var tangentVelo2 = particle2.velo2D.subtract(normalVelo2);
 				// move particles so that they just touch	
-				var L = ball1.radius + ball2.radius-dist.length();
+				var L = particle1.radius + particle2.radius-dist.length();
 				var vrel = normalVelo1.subtract(normalVelo2).length();
-				ball1.pos2D = ball1.pos2D.addScaled(normalVelo1,-L/vrel);
-				ball2.pos2D = ball2.pos2D.addScaled(normalVelo2,-L/vrel);				
+				particle1.pos2D = particle1.pos2D.addScaled(normalVelo1,-L/vrel);
+				particle2.pos2D = particle2.pos2D.addScaled(normalVelo2,-L/vrel);				
 				// normal velocity components after the impact
-				var m1 = ball1.mass;
-				var m2 = ball2.mass;
+				var m1 = particle1.mass;
+				var m2 = particle2.mass;
 				var u1 = normalVelo1.projection(dist);
 				var u2 = normalVelo2.projection(dist);			
 				var v1 = ((m1-m2)*u1+2*m2*u2)/(m1+m2);
@@ -115,11 +115,11 @@ function checkCollision(){
 				normalVelo1 = dist.para(v1);
 				normalVelo2 = dist.para(v2);
 				// final velocity vectors after collision
-				ball1.velo2D = normalVelo1.add(tangentVelo1);
-				ball2.velo2D = normalVelo2.add(tangentVelo2);
+				particle1.velo2D = normalVelo1.add(tangentVelo1);
+				particle2.velo2D = normalVelo2.add(tangentVelo2);
 			}
 		}	
-		checkWallBounce(ball1);		
+		checkWallBounce(particle1);		
 	}			
 }
 function checkWallBounce(obj){
@@ -127,11 +127,11 @@ function checkWallBounce(obj){
 	for (var i=0; (i<walls.length && hasHitAWall==false); i++){
 		var wall = walls[i];		
 		var wdir = wall.dir;
-		var ballp1 = wall.p1.subtract(obj.pos2D);
-		var ballp2 = wall.p2.subtract(obj.pos2D);
-		var proj1 = ballp1.projection(wdir);                
-		var proj2 = ballp2.projection(wdir);
-		var dist = ballp1.addScaled(wdir.unit(), proj1*(-1));
+		var particlep1 = wall.p1.subtract(obj.pos2D);
+		var particlep2 = wall.p2.subtract(obj.pos2D);
+		var proj1 = particlep1.projection(wdir);                
+		var proj2 = particlep2.projection(wdir);
+		var dist = particlep1.addScaled(wdir.unit(), proj1*(-1));
 		var test = ((Math.abs(proj1) < wdir.length()) && (Math.abs(proj2) < wdir.length()));
 		if ((dist.length() < obj.radius) &&  test){
 			var angle = Vector2D.angleBetween(obj.velo2D, wdir);
