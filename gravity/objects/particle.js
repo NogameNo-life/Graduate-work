@@ -1,4 +1,4 @@
-﻿// dependencies: Vector2D
+// dependencies: Vector2D
 function Particle(radius,color,mass,charge,gradient,line){
 	if(typeof(radius)==='undefined') radius = 20;
 	if(typeof(color)==='undefined') color = '#0000ff';
@@ -68,5 +68,6 @@ Particle.prototype = {
 			context.closePath();
 			context.stroke();
 		}
+		
 	}
 };
