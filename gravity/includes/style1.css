@@ -5,13 +5,9 @@ body {
 #canvas {
   background-color: #050505;
   position:absolute;
-  /*top:10px;
-  left:10px;*/
 }
 #canvas_bg {
   background-color: pink ;
   position:absolute;
-  /*top:10px;
-  left:10px;*/
 }
 
