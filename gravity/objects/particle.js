@@ -68,6 +68,7 @@ Particle.prototype = {
 			context.closePath();
 			context.stroke();
 		}
-		
 	}
 };
+
+
