@@ -1,4 +1,4 @@
-﻿// dependencies: Vector2D
+// dependencies: Vector2D
 function Wall(p1,p2){	
 	this.p1 = p1;
 	this.p2 = p2;	
@@ -23,5 +23,4 @@ Wall.prototype = {
 		context.restore();
 	}
 };
-
 		
