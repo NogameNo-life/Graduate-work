@@ -24,5 +24,4 @@ Wall.prototype = {
 	}
 };
 
-
 		
