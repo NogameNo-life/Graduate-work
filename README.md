@@ -453,6 +453,125 @@ Particle.prototype = {
 Чтобы упростить код для обновления значения ```pos2D``` и ```velo2D``` частицы, были добавлены методы, ```multiply(k)``` и ```addScaled(vec, k)```, к объекту ```Vector2D``` (где vec $-$ это ```Vector2D```, а $k$ $-$ число). Метод ```vec1.multiply(k)```
 умножает вектор vec1 на скаляр $k$, а ```vec1.addScaled(vec, k)``` добавляет $k$ раз vec к vec1.
 
+Наличие столкновений между парами частиц в массиве проверяются в методе```checkCollision()```. Для этого мы используем ```Vector2D.distance(vec1,vec2)```, статический метод, который вычисляет расстояние между двумя точками с помощью векторов положения vec1 и vec2. Логика алгоритма обнаружения столкновений проста: если расстояние между центрами двух частиц меньше или равно сумме их радиусов, это означает, что они столкнулись. Затем мы меняем местами скорости двух частиц. [3]
+
+```JS
+var dist = particle1.pos2D.subtract(particle2.pos2D);
+if (dist.length() < (particle1.radius + particle2.radius) ) {
+        // normal velocity vectors just before the impact
+        var normalVelo1 = particle1.velo2D.project(dist);
+        var normalVelo2 = particle2.velo2D.project(dist);
+        // tangential velocity vectors
+        var tangentVelo1 = particle1.velo2D.subtract(normalVelo1);
+        var tangentVelo2 = particle2.velo2D.subtract(normalVelo2);
+        // move particles so that they just touch
+        var L = particle1.radius + particle2.radius-dist.length();
+        var vrel = normalVelo1.subtract(normalVelo2).length();
+        particle1.pos2D = particle1.pos2D.addScaled(normalVelo1,-L/vrel);
+        particle2.pos2D = particle2.pos2D.addScaled(normalVelo2,-L/vrel);
+        // normal velocity components after the impact
+        var m1 = particle1.mass;
+        var m2 = particle2.mass;
+        var u1 = normalVelo1.projection(dist);
+        var u2 = normalVelo2.projection(dist);
+        var v1 = ((m1-m2)*u1+2*m2*u2)/(m1+m2);
+        var v2 = ((m2-m1)*u2+2*m1*u1)/(m1+m2);
+        // normal velocity vectors after collision
+        normalVelo1 = dist.para(v1);
+        normalVelo2 = dist.para(v2);
+        // final velocity vectors after collision
+        particle1.velo2D = normalVelo1.add(tangentVelo1);
+        particle2.velo2D = normalVelo2.add(tangentVelo2);
+      }
+```
+
+Все необходимые методы для работы с векторами находятся в файле ```/gravity/objects/vector2D.js```. Вот некоторые из них:
+
+Расчет длины вектора
+
+```JS
+// PUBLIC METHODS
+Vector2D.prototype = {
+  lengthSquared: function(){
+    return this.x*this.x + this.y*this.y;
+  },
+  length: function(){
+    return Math.sqrt(this.lengthSquared());
+  },
+```
+
+Сложение и вычитание векторов
+
+```JS
+add: function(vec) {
+    return new Vector2D(this.x + vec.x,this.y + vec.y);
+  },
+  subtract: function(vec) {
+    return new Vector2D(this.x - vec.x,this.y - vec.y);
+  },
+```
+
+Умножение вектора на скаляр
+
+```JS
+scaleBy: function(k) {
+    this.x *= k;
+    this.y *= k;
+  },
+```
+
+Скалярное произведение векторов
+
+```JS
+  dotProduct: function(vec) {
+    return this.x*vec.x + this.y*vec.y;
+  },
+```
+
+Вычисление проекции вектора vec1 в направлении вектора vec2.
+
+```JS
+projection: function(vec) {
+    var length = this.length();
+    var lengthVec = vec.length();
+    var proj;
+    if( (length == 0) || ( lengthVec == 0) ){
+      proj = 0;
+    }
+    else {
+      proj = (this.x*vec.x + this.y*vec.y)/lengthVec;
+    }
+    return proj;
+  },
+  project: function(vec) {
+    return vec.para(this.projection(vec));
+  },
+  para: function(u,positive){
+    if (typeof(positive)==='undefined') positive = true;
+    var length = this.length();
+    var vec = new Vector2D(this.x, this.y);
+    if (positive){
+      vec.scaleBy(u/length);
+    }
+    else{
+      vec.scaleBy(-u/length);
+    }
+    return vec;
+  },
+```
+
+Вычисление расстояния и угла между двумя векторами
+
+```JS
+// STATIC METHODS
+Vector2D.distance =  function(vec1,vec2){
+  return (vec1.subtract(vec2)).length();
+}
+Vector2D.angleBetween = function(vec1,vec2){
+  return Math.acos(vec1.dotProduct(vec2)/(vec1.length()*vec2.length()));
+}
+```
+
 ### 3.2 Моделирование броуновского движения
 
 Моделирование осуществляется с помощью ```Pygame``` и ```Pymunk```.
