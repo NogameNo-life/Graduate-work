@@ -392,25 +392,16 @@ var canvas_bg = document.getElementById('canvas_bg');
 var context_bg = canvas_bg.getContext('2d');
 ```
 
-Объявить переменные, которые будут использоваться в процессе моделирования
+Объявляем переменные, которые будут использоваться в процессе моделирования
 
 ```JS
 var particles; // частицы
 var numParticles = 300; // количество частиц
 var walls; // стенки сосуда
-var vfac = 1;
 var t0, dt; // время для точного расчета движения
 var g = 15; // гравитация
 var force; // силы
 var acc; // ускорение
-```
-
-Определяем функцию для генерации случайнх чисел в диапазоне
-
-```JS
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-}
 ```
 
 Присваиваем функцию ```init()``` в качестве обработчика события ```onload``` объекта ```window```.
