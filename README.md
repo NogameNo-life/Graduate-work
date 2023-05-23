@@ -15,8 +15,8 @@
 + [ГЛАВА 3. ОПИСАНИЕ ПРОЦЕССА МОДЕЛИРОВАНИЯ](#глава-3-описание-процесса-моделирования)
   + [3.1 Связь моделирования и симуляции. Имитация датчика температуры](#31-cвязь-моделирования-и-симуляциии-имитация-датчика-температуры)
   + [3.2 Моделирование распределения частиц в поле силы тяжести](#32-моделирование-распределения-частиц-в-поле-силы-тяжести)
-  + [3.3 Моделирование броуновского движения](#33-моделирование-броуновского-движения)
-  + [3.4 Моделирование распределения молекул по скоростям](#34-моделирование-распределения-молекул-по-скоростям)
+  + [3.3 Моделирование распределения молекул по скоростям](#33-моделирование-распределения-молекул-по-скоростям)
+  + [3.4 Моделирование броуновского движения](#34-моделирование-броуновского-движения)
   + [3.5 Результаты моделирования](#35-результаты-моделирования)
 + [ЗАКЛЮЧЕНИЕ](#заключение)
 + [СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ](#список-использованных-источников)
@@ -513,125 +513,6 @@ Vector2D.distance =  function(vec1,vec2){
 + Вычисление проекции вектора vec1 в направлении вектора vec2.
 + Вычисление расстояния и угла между двумя векторами
 
-Наличие столкновений между парами частиц в массиве проверяются в методе```checkCollision()```. Для этого мы используем ```Vector2D.distance(vec1,vec2)```, статический метод, который вычисляет расстояние между двумя точками с помощью векторов положения vec1 и vec2. Логика алгоритма обнаружения столкновений проста: если расстояние между центрами двух частиц меньше или равно сумме их радиусов, это означает, что они столкнулись. Затем мы меняем местами скорости двух частиц. [3]
-
-```JS
-var dist = particle1.pos2D.subtract(particle2.pos2D);
-if (dist.length() < (particle1.radius + particle2.radius) ) {
-        // normal velocity vectors just before the impact
-        var normalVelo1 = particle1.velo2D.project(dist);
-        var normalVelo2 = particle2.velo2D.project(dist);
-        // tangential velocity vectors
-        var tangentVelo1 = particle1.velo2D.subtract(normalVelo1);
-        var tangentVelo2 = particle2.velo2D.subtract(normalVelo2);
-        // move particles so that they just touch
-        var L = particle1.radius + particle2.radius-dist.length();
-        var vrel = normalVelo1.subtract(normalVelo2).length();
-        particle1.pos2D = particle1.pos2D.addScaled(normalVelo1,-L/vrel);
-        particle2.pos2D = particle2.pos2D.addScaled(normalVelo2,-L/vrel);
-        // normal velocity components after the impact
-        var m1 = particle1.mass;
-        var m2 = particle2.mass;
-        var u1 = normalVelo1.projection(dist);
-        var u2 = normalVelo2.projection(dist);
-        var v1 = ((m1-m2)*u1+2*m2*u2)/(m1+m2);
-        var v2 = ((m2-m1)*u2+2*m1*u1)/(m1+m2);
-        // normal velocity vectors after collision
-        normalVelo1 = dist.para(v1);
-        normalVelo2 = dist.para(v2);
-        // final velocity vectors after collision
-        particle1.velo2D = normalVelo1.add(tangentVelo1);
-        particle2.velo2D = normalVelo2.add(tangentVelo2);
-      }
-```
-
-Все необходимые методы для работы с векторами находятся в файле ```/gravity/objects/vector2D.js```. Вот некоторые из них:
-
-Расчет длины вектора
-
-```JS
-// PUBLIC METHODS
-Vector2D.prototype = {
-  lengthSquared: function(){
-    return this.x*this.x + this.y*this.y;
-  },
-  length: function(){
-    return Math.sqrt(this.lengthSquared());
-  },
-```
-
-Сложение и вычитание векторов
-
-```JS
-add: function(vec) {
-    return new Vector2D(this.x + vec.x,this.y + vec.y);
-  },
-  subtract: function(vec) {
-    return new Vector2D(this.x - vec.x,this.y - vec.y);
-  },
-```
-
-Умножение вектора на скаляр
-
-```JS
-scaleBy: function(k) {
-    this.x *= k;
-    this.y *= k;
-  },
-```
-
-Скалярное произведение векторов
-
-```JS
-  dotProduct: function(vec) {
-    return this.x*vec.x + this.y*vec.y;
-  },
-```
-
-Вычисление проекции вектора vec1 в направлении вектора vec2.
-
-```JS
-projection: function(vec) {
-    var length = this.length();
-    var lengthVec = vec.length();
-    var proj;
-    if( (length == 0) || ( lengthVec == 0) ){
-      proj = 0;
-    }
-    else {
-      proj = (this.x*vec.x + this.y*vec.y)/lengthVec;
-    }
-    return proj;
-  },
-  project: function(vec) {
-    return vec.para(this.projection(vec));
-  },
-  para: function(u,positive){
-    if (typeof(positive)==='undefined') positive = true;
-    var length = this.length();
-    var vec = new Vector2D(this.x, this.y);
-    if (positive){
-      vec.scaleBy(u/length);
-    }
-    else{
-      vec.scaleBy(-u/length);
-    }
-    return vec;
-  },
-```
-
-Вычисление расстояния и угла между двумя векторами
-
-```JS
-// STATIC METHODS
-Vector2D.distance =  function(vec1,vec2){
-  return (vec1.subtract(vec2)).length();
-}
-Vector2D.angleBetween = function(vec1,vec2){
-  return Math.acos(vec1.dotProduct(vec2)/(vec1.length()*vec2.length()));
-}
-```
-
 JavaScript для анимации использует функции таймера. Самые популярные из них это ```setTimeout()``` и ```setInterval()```. Данные методы используются для управления временем выполнения кода. ```setTimeout()``` позволяет задержать выполнение функции на определенный промежуток времени (в миллисекундах). Он принимает два аргумента: функцию, которую нужно выполнить, и время задержки.
 
 ```setInterval()``` позволяет запускать функцию через определенные промежутки времени. Он также принимает два аргумента: функцию, которую нужно выполнить, и время задержки между ее запусками. Мы можем указать задержку времени в функции ```setInterval()``` как $1000$ / fps, где fps $-$ это частота кадров анимации, то есть количество обновлений или кадров в секунду. Как частота кадров связана с воспринимаемой скоростью анимации? Чтобы ответить на этот вопрос, нам нужно выполнить некоторые простые математические операции. Предположим, что мы хотим перемещать объект с постоянной скоростью $100$ пикселей в секунду, и предположим, что частота кадров анимации составляет $50$ кадров в секунду. Давайте увеличим горизонтальную позицию объекта на $v_x$ за кадр, как в примере отскакивающего мяча:
@@ -703,69 +584,7 @@ Forces.constantGravity = function(m,g){
 
 Как видно в листинге выше в качестве параметров он принимает значения массы и силы тяжести.
 
-### 3.3 Моделирование броуновского движения
-
-Моделирование осуществляется с помощью ```Pygame``` и ```Pymunk```.
-
-Параметры атомов описаны в классе ```Atom```. Данный класс имеет такие поля как радиус, скорость, масса, плотность, упругость, форму, начальную позицию и координаты.
-
-```Python
-class Atom():
-    def __init__(self,x,y):
-        self.x=x
-        self.y=y
-        self.mass=1
-        self.radius=8
-        self.moment=pymunk.moment_for_circle(self.mass,0,self.radius)
-        self.body=pymunk.Body(self.mass,self.moment)
-        self.body.position=x,y
-        self.body.velocity=random.uniform(-100,100),random.uniform(-100,100)
-        self.shape=pymunk.Circle(self.body,self.radius)
-        self.shape.density=1
-        self.shape.elasticity=1
-        space.add(self.body,self.shape)
-```
-
-Класс имеет один метод, который в качестве параметра принимает объект класса ```Atom``` и с помощью его координат с радиусом  рисует фигуру на поверхности.
-
-Отрисовка производится посредством встроенного в Pygame метода ```draw.circle()```.
-
-```Python
-def draw(self):
-    x,y=self.body.position
-    pygame.draw.circle(display,PURPLE,(int(x),int(y)),self.radius)
-```
-
-Модель частицы описана в классе ```Particle```, который идентичен классу ```Atom```. Отличие двух классов заключается в значениях таких полей как радиус, масса, скорость и плотность. Здесь также присутствует метод класса ```draw()```, который принимает в качестве параметра объект класса ```Particle```.
-Классы описывают модель одного атома или частицы вещества. Но нам нужно, чтобы этих частиц было много и вообще для начала их создать.
-Данный процесс происходит в функции ```game()```, в которой создаются объекты всех вышеперечисленных классов, а также в функции ```game()``` находится главный цикл, который будет вызывать все методы для отрисовки физических объектов.
-Функция ```game()``` не принимает никаких параметров на входе. В её реализации прописано создание списков объектов классов ```Atom```, ```Particle``` и ```Wall```. Списки генерируются с помощью механизма языка ```Python list comprehension```. Это нужно, чтобы происходила отрисовка не одной, а множества частиц на экране.
-
-```Python
-def game():
-    atoms=[Atom(random.randint(0,800),random.randint(0,800)) for i in range(450)]
-    particles=[Particle(random.randint(0,800),random.randint(0,800)) for i in range(5)]
-    walls=[Wall((0,0),(0,800)),
-    Wall((0,0),(800,0)),
-            Wall((0,800),(800,800)),
-            Wall((800,0),(800,800))]
-    while True:
-        for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-           exit()
-
-        display.fill((0,0,0))
-        for atom in atoms:
-            atom.draw()
-            for particle in particles:
-                particle.draw()
-
-        pygame.display.update()
-        clock.tick(FPS)
-        space.step(1/FPS)
-```
-
-### 3.4 Моделирование распределения молекул по скоростям
+### 3.3 Моделирование распределения молекул по скоростям
 
 Программа моделирует систему частиц и анимированную гистограмму распределения их скоростей, используя модули ```matplotlib``` и ```numpy```.
 
@@ -829,6 +648,68 @@ init_func #функция для отрисовки четкого кадра
 ```
 
 Если ```init_func``` не указана, будут использованы результаты рисования из первого элемента в последовательности кадров.
+
+### 3.4 Моделирование броуновского движения
+
+Моделирование осуществляется с помощью ```Pygame``` и ```Pymunk```.
+
+Параметры атомов описаны в классе ```Atom```. Данный класс имеет такие поля как радиус, скорость, масса, плотность, упругость, форму, начальную позицию и координаты.
+
+```Python
+class Atom():
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+        self.mass=1
+        self.radius=8
+        self.moment=pymunk.moment_for_circle(self.mass,0,self.radius)
+        self.body=pymunk.Body(self.mass,self.moment)
+        self.body.position=x,y
+        self.body.velocity=random.uniform(-100,100),random.uniform(-100,100)
+        self.shape=pymunk.Circle(self.body,self.radius)
+        self.shape.density=1
+        self.shape.elasticity=1
+        space.add(self.body,self.shape)
+```
+
+Класс имеет один метод, который в качестве параметра принимает объект класса ```Atom``` и с помощью его координат с радиусом  рисует фигуру на поверхности.
+
+Отрисовка производится посредством встроенного в Pygame метода ```draw.circle()```.
+
+```Python
+def draw(self):
+    x,y=self.body.position
+    pygame.draw.circle(display,PURPLE,(int(x),int(y)),self.radius)
+```
+
+Модель частицы описана в классе ```Particle```, который идентичен классу ```Atom```. Отличие двух классов заключается в значениях таких полей как радиус, масса, скорость и плотность. Здесь также присутствует метод класса ```draw()```, который принимает в качестве параметра объект класса ```Particle```.
+Классы описывают модель одного атома или частицы вещества. Но нам нужно, чтобы этих частиц было много и вообще для начала их создать.
+Данный процесс происходит в функции ```game()```, в которой создаются объекты всех вышеперечисленных классов, а также в функции ```game()``` находится главный цикл, который будет вызывать все методы для отрисовки физических объектов.
+Функция ```game()``` не принимает никаких параметров на входе. В её реализации прописано создание списков объектов классов ```Atom```, ```Particle``` и ```Wall```. Списки генерируются с помощью механизма языка ```Python list comprehension```. Это нужно, чтобы происходила отрисовка не одной, а множества частиц на экране.
+
+```Python
+def game():
+    atoms=[Atom(random.randint(0,800),random.randint(0,800)) for i in range(450)]
+    particles=[Particle(random.randint(0,800),random.randint(0,800)) for i in range(5)]
+    walls=[Wall((0,0),(0,800)),
+    Wall((0,0),(800,0)),
+            Wall((0,800),(800,800)),
+            Wall((800,0),(800,800))]
+    while True:
+        for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+           exit()
+
+        display.fill((0,0,0))
+        for atom in atoms:
+            atom.draw()
+            for particle in particles:
+                particle.draw()
+
+        pygame.display.update()
+        clock.tick(FPS)
+        space.step(1/FPS)
+```
 
 ### 3.5 Результаты моделирования
 
