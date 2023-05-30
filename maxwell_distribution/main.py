@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation,  PillowWriter
-from mdsim import MDSimulation
+from particle import Particle
 from histogram import Histogram
 
 plt.style.use('seaborn-dark')
@@ -36,7 +36,7 @@ theta = np.random.random(n) * 2 * np.pi
 s0 = sbar * np.random.random(n)
 vel = (s0 * np.array((np.cos(theta), np.sin(theta)))).T
 
-sim = MDSimulation(pos, vel, r, m)
+sim = Particle(pos, vel, r, m)
 
 # Set up the Figure and make some adjustments to improve its appearance.
 DPI = 100
