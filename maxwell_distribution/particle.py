@@ -1,80 +1,52 @@
 import numpy as np
-from matplotlib.patches import Circle
+from scipy.spatial.distance import pdist, squareform
 
 class Particle:
-    """A class representing a two-dimensional particle."""
 
-    def __init__(self, x, y, vx, vy, radius=0.01, styles=None):
-        """Initialize the particle's position, velocity, and radius.
-
-        Any key-value pairs passed in the styles dictionary will be passed
-        as arguments to Matplotlib's Circle patch constructor.
-
+    def __init__(self, pos, vel, r, m):
+        """
+        Initialize the simulation with identical, circular particles of radius
+        r and mass m. The n x 2 state arrays pos and vel hold the n particles'
+        positions in their rows as (x_i, y_i) and (vx_i, vy_i).
         """
 
-        self.r = np.array((x, y))
-        self.v = np.array((vx, vy))
-        self.radius = radius
-
-        self.styles = styles
-        if not self.styles:
-            # Default circle styles
-            self.styles = {'edgecolor': 'b', 'fill': False}
-
-    # For convenience, map the components of the particle's position and
-    # velocity vector onto the attributes x, y, vx and vy.
-    @property
-    def x(self):
-        return self.r[0]
-    @x.setter
-    def x(self, value):
-        self.r[0] = value
-    @property
-    def y(self):
-        return self.r[1]
-    @y.setter
-    def y(self, value):
-        self.r[1] = value
-    @property
-    def vx(self):
-        return self.v[0]
-    @vx.setter
-    def vx(self, value):
-        self.v[0] = value
-    @property
-    def vy(self):
-        return self.v[1]
-    @vy.setter
-    def vy(self, value):
-        self.v[1] = value
-
-    def overlaps(self, other):
-        """Does the circle of this Particle overlap that of other?"""
-
-        return np.hypot(*(self.r - other.r)) < self.radius + other.radius
-
-    def draw(self, ax):
-        """Add this Particle's Circle patch to the Matplotlib Axes ax."""
-
-        circle = Circle(xy=self.r, radius=self.radius, **self.styles)
-        ax.add_patch(circle)
-        return circle
+        self.pos = np.asarray(pos, dtype=float)
+        self.vel = np.asarray(vel, dtype=float)
+        self.n = self.pos.shape[0]
+        self.r = r
+        self.m = m
+        self.nsteps = 0
 
     def advance(self, dt):
-        """Advance the Particle's position forward in time by dt."""
+        """Advance the simulation by dt seconds."""
+        X, Y = 0, 1
+        self.nsteps += 1
+        # Update the particles' positions according to their velocities.
+        self.pos += self.vel * dt*0.1
+        # Find indices for all unique collisions.
+        dist = squareform(pdist(self.pos))
+        iarr, jarr = np.where(dist < 2 * self.r)
+        k = iarr < jarr
+        iarr, jarr = iarr[k], jarr[k]
 
-        self.r += self.v * dt
+        # For each collision, update the velocities of the particles involved.
+        for i, j in zip(iarr, jarr):
+            pos_i, vel_i = self.pos[i], self.vel[i]
+            pos_j, vel_j =  self.pos[j], self.vel[j]
+            rel_pos, rel_vel = pos_i - pos_j, vel_i - vel_j
+            r_rel = rel_pos @ rel_pos
+            v_rel = rel_vel @ rel_pos
+            v_rel = 2 * rel_pos * v_rel / r_rel - rel_vel
+            v_cm = (vel_i + vel_j) / 2
+            self.vel[i] = v_cm - v_rel/2
+            self.vel[j] = v_cm + v_rel/2
 
-        # Make the Particles bounce off the walls
-        if self.x - self.radius < 0:
-            self.x = self.radius
-            self.vx = -self.vx
-        if self.x + self.radius > 1:
-            self.x = 1-self.radius
-            self.vx = -self.vx
-        if self.y - self.radius < 0:
-            self.y = self.radius
-            self.vy = -self.vy
-        if self.y + self.radius > 1:
-            self.y = 1-self.radius
-            self.vy = -self.vy
+        # Bounce the particles off the walls where necessary, by reflecting
+        # their velocity vectors.
+        hit_left_wall = self.pos[:, X] < self.r
+        hit_right_wall = self.pos[:, X] > 1 - self.r
+        hit_bottom_wall = self.pos[:, Y] < self.r
+        hit_top_wall = self.pos[:, Y] > 1 - self.r
+        self.vel[hit_left_wall | hit_right_wall, X] *= -1
+        self.vel[hit_bottom_wall | hit_top_wall, Y] *= -1
+
