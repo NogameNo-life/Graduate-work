@@ -3,7 +3,7 @@
 \usepackage[russian]{babel}
 \usepackage[T2A]{fontenc}
 \usefont{T2A}{ftm}{m}{sl}
-\usepackage[left=30mm, right=10mm, top=20 mm, bottom=20mm]{geometry} 
+\usepackage[left=30mm, right=10mm, top=20 mm, bottom=20mm]{geometry}
 \usepackage{xcolor}
 \usepackage{lipsum}
 \usepackage{ragged2e}
@@ -17,7 +17,7 @@
 \usepackage{hyphenat}                               % Для красивых переносов
 \usepackage{textcomp}                               % Поддержка "сложных" печатных символов типа значков иены, копирайта и т.д.
 \usepackage[version=4]{mhchem}                      % Красивые химические уравнения
-\usepackage{amsmath}                                % Усовершенствование отображения математических выражений 
+\usepackage{amsmath}                                % Усовершенствование отображения математических выражений
 
 \pagestyle{plain} % Убираем стандарные для данного класса верхние колонтитулы с заголовком текущей главы, оставляем только номер страницы снизу по центру
 
@@ -47,7 +47,7 @@
 \setbeforesecskip{10pt} % Задаем отступ перед заголовком секции
 \setaftersecskip{10pt} % Ставим такой же отступ после заголовка секции
 \setsecheadstyle{\raggedright\normalfont\bfseries} % Меняем стиль написания для заголовка секции: выравнивание по правому краю без переносов, нормальный размер, полужирный
-\renewcommand*{\printchapternum}{} 
+\renewcommand*{\printchapternum}{}
 \maxtocdepth{subsection} % В оглавление попадают только разделы первыхтрех уровней: главы, секции и подсекции
 
 %%% Выравнивание и переносы %%%
@@ -61,7 +61,7 @@
 %\sloppy                                            % Избавляемся от переполнений
 \clubpenalty=10000                                  % Запрещаем разрыв страницы после первой строки абзаца
 \widowpenalty=10000                                 % Запрещаем разрыв страницы после последней строки абзаца
-\brokenpenalty=4991                                 % Ограничение на разрыв страницы, если строка 
+\brokenpenalty=4991                                 % Ограничение на разрыв страницы, если строка
 
 %%% Настраиваем отображение списков %%%
 
@@ -81,8 +81,8 @@
 
 \usepackage{graphicx, caption, subcaption} % Подгружаем пакеты для работы с графикой и настройки подписей
 \graphicspath{{images/}} % Определяем папку с рисунками
-\captionsetup[subfigure]{labelformat=empty} 
-\captionsetup[figure]{labelformat=empty} 
+\captionsetup[subfigure]{labelformat=empty}
+\captionsetup[figure]{labelformat=empty}
 \setkeys{Gin}{width=\textwidth} % По умолчанию размер всех добавляемых рисунков будет подгоняться под ширину текста
 \usepackage[section]{placeins} % Объекты типа float (рисунки/таблицы) не вылезают за границы секциии, в которой они объявлены
 % Зачем: Включение номера раздела в номер рисунка. Нумерация рисунков внутри раздела.
@@ -90,7 +90,7 @@
 %%% Реализация библиографии пакетами biblatex и biblatex-gost с использованием движка biber %%%
 \usepackage{csquotes}
 \usepackage[backend=biber,                          % Движок
-bibencoding=utf8,                                   % Кодировка bib-файла   sorting=none,                     
+bibencoding=utf8,                                   % Кодировка bib-файла   sorting=none,
 style=gost-numeric,                                 % Стиль цитирования и библиографии по ГОСТ
 language=auto,                                      % Язык для каждой библиографической записи задается отдельно
 autolang=other,                                     % Поддержка многоязычной библиографии
@@ -110,14 +110,14 @@ isbn=false, ]{biblatex}
 \input{1_title}        % Титульный лист
 \newpage               % переход на новую страницу
 \setcounter{page}{2}   % Начинаем считать номера страниц со второй
-\tableofcontents*      % Автособираемое оглавление                             
+\tableofcontents*      % Автособираемое оглавление
 
 \input{2_intro}        % Введение
-\input{3_character}    % Общая характеристика работы 
-\input{4_chapter1}     % 1 глава 
+\input{3_character}    % Общая характеристика работы
+\input{4_chapter1}     % 1 глава
 \input{5_chapter2}     % 2 глава
 \input{6_chapter3}     % 3 глава
-\input{7_concl}        % Заключение 
-
+\input{7_concl}        % Заключение
+\input{8_publish}      % Cписок работ опубликованных по теме
 \printbibliography[title= Список использованных источников]
 \end{document}
