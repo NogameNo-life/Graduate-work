@@ -1,15 +1,14 @@
 \documentclass[a4paper,14pt,oneside,openany]{memoir}
 \usepackage[utf8]{inputenc}
-\usepackage[T1,T2A]{fontenc}
-\usepackage[english, russian]{babel}                % Настройки для русского языка
-\usepackage{times}
-\usepackage{array}
-\setlength{\arrayrulewidth}{0.005 mm}
+\usepackage[russian]{babel}
+\usepackage[T2A]{fontenc}
+\usefont{T2A}{ftm}{m}{sl}
+\usepackage[left=30mm, right=10mm, top=20 mm, bottom=20mm]{geometry} 
 \usepackage{xcolor}
 \usepackage{lipsum}
 \usepackage{ragged2e}
-
-\usepackage[left=30mm, right=10mm, top=20 mm, bottom=20mm]{geometry}
+\usepackage{listings}
+\usepackage{minted}
 
 \usepackage{multirow,makecell}                      % Улучшенное форматирование таблиц
 \usepackage{booktabs}                               % Еще один пакет для красивых таблиц
@@ -20,13 +19,12 @@
 \usepackage[version=4]{mhchem}                      % Красивые химические уравнения
 \usepackage{amsmath}                                % Усовершенствование отображения математических выражений 
 
-
 \pagestyle{plain} % Убираем стандарные для данного класса верхние колонтитулы с заголовком текущей главы, оставляем только номер страницы снизу по центру
 
 %%% Задаем параметры оглавления %%%
 
 \usepackage{indentfirst} % Добавляем отступ к первому абзацу
-\linespread{1} % Межстрочный интервал (наиболее близко к вордовскому полуторному) - тут вместо этого используется команда OnehalfSpacing*
+\linespread{1} % Межстрочный интервал (наиболее близко к вордовскому полуторному)
 \parindent=0.8cm % Абзацный отступ
 \renewcommand*{\chapternumberline}[1]{} % Делаем так, чтобы номер главы не печатался
 \renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase} % Названия глав обычным шрифтом заглавными буквами
@@ -36,9 +34,9 @@
 \renewcommand*{\cftchapternumwidth}{1.5em} % Ставим подходящий по размеру разделитель между номером главы и самим заголовком
 \setsecnumdepth{subsection} % Номера разделов считать до третьего уровня включительно, т.е. нумеруются только главы, секции, подсекции
 \renewcommand*{\chapterheadstart}{} % Переопределяем команду, задающую отступ над заголовком, чтобы отступа не было
-\renewcommand*{\printchapternum}{} % То же самое для номера главы
+\renewcommand*{\printchapternum}{} % То же самое для номера главы - тут не надо, номер главы оставляем
 \renewcommand*{\printchaptername}{} % Переопределяем команду, печатающую слово "Глава", чтобы оно не печалось
-\renewcommand*{\cftchapterfont}{\normalfont\textbf\MakeUppercase} % Названия глав обычным шрифтом заглавными буквами
+\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase} % Названия глав обычным шрифтом заглавными буквами
 \renewcommand*{\cftchapterpagefont}{\normalfont} % Номера страниц обычным шрифтом
 \renewcommand*{\cftchapterleader}{\cftdotfill{\cftchapterdotsep}} % Делаем точки стандартной формы (по умолчанию они "жирные")
 \renewcommand*{\cftchapterdotsep}{\cftdotsep} % Делаем точки до номера страницы после названий глав
@@ -50,7 +48,6 @@
 \setaftersecskip{10pt} % Ставим такой же отступ после заголовка секции
 \setsecheadstyle{\raggedright\normalfont\bfseries} % Меняем стиль написания для заголовка секции: выравнивание по правому краю без переносов, нормальный размер, полужирный
 \renewcommand*{\printchapternum}{} 
-
 \maxtocdepth{subsection} % В оглавление попадают только разделы первыхтрех уровней: главы, секции и подсекции
 
 %%% Выравнивание и переносы %%%
@@ -64,57 +61,63 @@
 %\sloppy                                            % Избавляемся от переполнений
 \clubpenalty=10000                                  % Запрещаем разрыв страницы после первой строки абзаца
 \widowpenalty=10000                                 % Запрещаем разрыв страницы после последней строки абзаца
-\brokenpenalty=4991                                 % Ограничение на разрыв страницы, если строка заканчивается переносом
-
+\brokenpenalty=4991                                 % Ограничение на разрыв страницы, если строка 
 
 %%% Настраиваем отображение списков %%%
 
 \usepackage{enumitem}                               % Подгружаем пакет для гибкой настройки списков
 \makeatletter
-    \AddEnumerateCounter{\asbuk}{\russian@alph}     % Объясняем пакету enumitem, как использовать asbuk
+\AddEnumerateCounter{\asbuk}{\russian@alph}         % Объясняем пакету enumitem, как использовать asbuk
 \makeatother
-\renewcommand{\labelenumii}{\asbuk{enumii}}        % Кириллица для второго уровня нумерации
-\renewcommand{\labelenumiii}{\arabic{enumiii}}     % Арабские цифры для третьего уровня нумерации
+\renewcommand{\labelenumii}{\asbuk{enumii})}        % Кириллица для второго уровня нумерации
+\renewcommand{\labelenumiii}{\arabic{enumiii})}     % Арабские цифры для третьего уровня нумерации
 \setlist{noitemsep, leftmargin=*}                   % Убираем интервалы между пунками одного уровня в списке
 \setlist[1]{labelindent=\parindent}                 % Отступ у пунктов списка равен абзацному отступу
 \setlist[2]{leftmargin=\parindent}                  % Плюс еще один такой же отступ для следующего уровня
 \setlist[3]{leftmargin=\parindent}                  % И еще один для третьего уровня
 
-%%% Счетчики для нумерации объектов %%%
 
-\counterwithout{equation}{chapter}                  % Сквозная нумерация математических выражений по документу
-%\counterwithout{table}{chapter}   
-
-
-%%% Задаем параметры оформления рисунков и таблиц %%%
+%%% Задаем параметры оформления рисунков %%%
 
 \usepackage{graphicx, caption, subcaption} % Подгружаем пакеты для работы с графикой и настройки подписей
 \graphicspath{{images/}} % Определяем папку с рисунками
-\captionsetup[subfigure]{font=small, width=\textwidth, name=Рис., justification=centering} 
-\captionsetup[table]{singlelinecheck=false,font=small,width=\textwidth,justification=justified} % Задаем параметры подписей к таблицам: запрещаем переносы, маленький шрифт (в данном случае 12pt), ширина равна ширине текста, выравнивание по ширине
-\captiondelim{ --- } % Разделителем между номером рисунка/таблицы и текстом в подписи является длинное тире
-\setkeys{Gin}{width=\textwidth} % По умолчанию размер всех добавляемых рисунков будет 
+\captionsetup[subfigure]{labelformat=empty} 
+\captionsetup[figure]{labelformat=empty} 
+\setkeys{Gin}{width=\textwidth} % По умолчанию размер всех добавляемых рисунков будет подгоняться под ширину текста
 \usepackage[section]{placeins} % Объекты типа float (рисунки/таблицы) не вылезают за границы секциии, в которой они объявлены
 % Зачем: Включение номера раздела в номер рисунка. Нумерация рисунков внутри раздела.
 
+%%% Реализация библиографии пакетами biblatex и biblatex-gost с использованием движка biber %%%
+\usepackage{csquotes}
+\usepackage[backend=biber,                          % Движок
+bibencoding=utf8,                                   % Кодировка bib-файла   sorting=none,                     
+style=gost-numeric,                                 % Стиль цитирования и библиографии по ГОСТ
+language=auto,                                      % Язык для каждой библиографической записи задается отдельно
+autolang=other,                                     % Поддержка многоязычной библиографии
+sortcites=true,                                     % Если в квадратных скобках несколько ссылок, то отображаться будут отсортированно
+movenames=false,                                    % Не перемещать имена, они всегда в начале библиографической записи
+maxnames=5,                                         % Максимальное отображаемое число авторов
+minnames=3,                                         % До скольки сокращать число авторов, если их больше максимума
+doi=false,                                          % Не отображать ссылки на DOI
+isbn=false, ]{biblatex}
+\addbibresource{biba.bib}
 
-\usepackage{caption}
-\usepackage{subcaption}
-\captionsetup[subfigure]{labelformat=empty} 
-%%% Вставляем по очереди все содержательные части документа %%%
+
 \begin{document}
 
-\input{1_title}      % ТИТУЛЬНЫЙ ЛИСТ
-\newpage             % Переходим на новую страницу
-\setcounter{page}{2} % Начинаем считать номера страниц со второй
-%\OnehalfSpacing* % Задаем полуторный интервал текста (в титульнике одинарный, поэтому команда стоит после него)
-\tableofcontents*    % Автособираемое оглавление
+%%% Вставляем по очереди все содержательные части документа %%%
 
-\input{2_intro}    % ВВЕДЕНИЕ
-\input{3_chapter1}
-\input{4_chapter2}
-\input{5_chapter3}
-\input{6_concl}
+\input{1_title}        % Титульный лист
+\newpage               % переход на новую страницу
+\setcounter{page}{2}   % Начинаем считать номера страниц со второй
+\tableofcontents*      % Автособираемое оглавление                             
 
+\input{2_intro}        % Введение
+\input{3_character}    % Общая характеристика работы 
+\input{4_chapter1}     % 1 глава 
+\input{5_chapter2}     % 2 глава
+\input{6_chapter3}     % 3 глава
+\input{7_concl}        % Заключение 
+
+\printbibliography[title= Список использованных источников]
 \end{document}
-
