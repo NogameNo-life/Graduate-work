@@ -218,6 +218,7 @@ $$M(\ddot{r}r)= rR(t)- 6\pi \eta a(\dot{r} r) \quad (1.3.5) $$
 $$(\dot{r}r)=\frac{1}{2} \cdot \frac{d^2}{dt^2}(r^2)- r^2, $$
 
 перепишем уравнение (1.3.5) в виде
+
 $$ M \frac{d^2}{dt^2}\left(\frac{r^2}{2}\right) + 6 \pi \eta a \frac{d}{dt}\left( \frac{r^2}{2}\right) = M\dot{r}^2 + rR(t).$$
 
 Проинтегрируем последнее уравнение один раз по времени и разделим почленно на t:
