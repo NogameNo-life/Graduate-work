@@ -22,7 +22,7 @@ Forces.forceField = function(q,E) {
 }
 Forces.lorentz = function(q,E,B,vel) {
 	return E.multiply(q).add(vel.perp(q*B*vel.length()));
-}		
+}
 Forces.central = function(k,n,r) {
 	return r.multiply(k*Math.pow(r.length(),n-1));
 }
@@ -45,7 +45,7 @@ Forces.drag = function(k,vel) {
 	else {
 		force = new Vector2D(0,0);
 	}
-	return force;			
+	return force;
 }
 Forces.lift = function(k,vel) {
 	var force;
@@ -56,11 +56,11 @@ Forces.lift = function(k,vel) {
 	else {
 		force = new Vector2D(0,0);
 	}
-	return force;			
-}			
+	return force;
+}
 Forces.upthrust = function(rho,V,g) {
 	return new Vector2D(0,-rho*V*g);
-}	
+}
 Forces.vortex = function(k,r0,r){
 	var force;
 	var rMag = r.length();
@@ -74,10 +74,10 @@ Forces.vortex = function(k,r0,r){
 		force = new Vector2D(0,0);
 	}
 	return force;
-}	
+}
 Forces.spring = function(k,r){
 	return r.multiply(-k);
-}		
+}
 Forces.damping = function(c,vel){
 	var force;
 	var velMag = vel.length();
